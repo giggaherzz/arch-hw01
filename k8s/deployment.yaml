@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: arch-hw01-deployment
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: arch-hw01-app
+  template:
+    metadata:
+      labels:
+        app: arch-hw01-app
+    spec:
+      containers:
+        - name: arch-hw01
+          image: giggaherzz/arch-hw01:latest
+          ports:
+            - name: http
+              containerPort: 8000
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            failureThreshold: 1
+            periodSeconds: 10
