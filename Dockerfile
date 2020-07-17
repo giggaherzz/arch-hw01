@@ -1,9 +1,9 @@
-FROM adoptopenjdk/openjdk11
+FROM maven:3-openjdk-11 as builder
+WORKDIR /app
+COPY . .
+RUN mvn package
 
-ARG APP_HOME=/app
-
-WORKDIR $APP_HOME
-
-COPY target/*.jar $APP_HOME/app.jar
-
+FROM adoptopenjdk/openjdk11:alpine-jre
+WORKDIR /java
+COPY --from=builder /app/target/*.jar /java/app.jar
 ENTRYPOINT java $JAVA_OPTS -jar app.jar $JAVA_ARGS
